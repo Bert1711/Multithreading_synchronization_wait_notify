@@ -5,15 +5,15 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Main {
     public static final Map<Integer, Integer> sizeToFreq = new ConcurrentHashMap<>();
     //ConcurrentHashMap — это потокобезопасная версия класса HashMap.
-
     public static void main(String[] args) throws InterruptedException {
+
         int numberThread = 1000; //Количество потоков равно количеству генерируемых маршрутов и равно 1000.
         Thread[] threads = new Thread[numberThread]; //Массив потоков [1000]
         for (int i = 0; i < numberThread; i++) {
             threads[i] = new Thread(() -> {
                 String route = generateRoute("RLRFR", 100);// В потоке генерируем текст используя метод generateRoute.
                 int countR = countR(route); //Считаем количество команд поворота направо (буквы 'R') используя метод countR.
-                synchronized (sizeToFreq) {//Гарантируем, что только один поток может получить доступ к блоку кода. Занимает экран объекта sizeToFreq.
+                synchronized (sizeToFreq) { //Гарантируем, что только один поток может получить доступ к блоку кода. Занимает экран объекта sizeToFreq.
                     if (sizeToFreq.containsKey(countR)) { // Проверяем у МАПЫ есть ли у неё данный ключ (countR)
                         sizeToFreq.put(countR, sizeToFreq.get(countR) + 1); // Если есть, то меняем значение этого ключа добавляя еденицу(key(countR)/value = intV +1)
                     } else {
