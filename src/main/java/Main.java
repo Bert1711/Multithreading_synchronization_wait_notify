@@ -5,8 +5,31 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Main {
     public static final Map<Integer, Integer> sizeToFreq = new ConcurrentHashMap<>();
     //ConcurrentHashMap — это потокобезопасная версия класса HashMap.
-
     public static void main(String[] args) throws InterruptedException {
+
+        Thread maxOutThread = new Thread(() -> {
+            while (!Thread.interrupted()) {
+                synchronized (sizeToFreq) {
+                    try {
+                        sizeToFreq.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                    int maxCount =0;
+                    int maxCountKey = 0;
+                    for(Map.Entry<Integer, Integer> entry : sizeToFreq.entrySet()) {
+                        if (entry.getValue() > maxCount) {
+                            maxCount = entry.getValue();
+                            maxCountKey = entry.getKey();
+                        }
+                    }
+                    System.out.println("Текущий лидер среди частот: " + maxCountKey + " (встретилось " + maxCount + " раз)");
+                }
+            }
+        });
+        maxOutThread.start();
+
         int numberThread = 1000; //Количество потоков равно количеству генерируемых маршрутов и равно 1000.
         Thread[] threads = new Thread[numberThread]; //Массив потоков [1000]
         for (int i = 0; i < numberThread; i++) {
