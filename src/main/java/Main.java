@@ -43,6 +43,7 @@ public class Main {
                         sizeToFreq.put(countR, 1);
                         // Если ещё не было данного ключа (countR), то добавляем в коллекцию ключ-значение (присвоив значению еденицу (valeu = 1))
                     }
+                    sizeToFreq.notify();
                 }
             });
             threads[i].start(); // Запускаем поток(нить).
@@ -50,6 +51,7 @@ public class Main {
         for (Thread thread : threads) {
             thread.join(); // Ждём каждый поток.
         }
+        maxOutThread.interrupt();
         int maxCount = 0;
         int maxCountKey = 0;
         for (Map.Entry<Integer, Integer> entry : sizeToFreq.entrySet()) {
